@@ -1831,6 +1831,8 @@ public:
     }
 
     PYBIND11_NOINLINE ~gil_scoped_acquire() {
+        if (!Py_IsInitialized() && detail::get_thread_state_unchecked() != tstate)
+            return;
         dec_ref();
         if (release)
            PyEval_SaveThread();
